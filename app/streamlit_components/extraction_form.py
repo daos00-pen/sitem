@@ -38,10 +38,11 @@ def call_get_html(url, slider_number_of_htmls, gemini_api_key):
                 return False
 
     try:
+        number_of_htmls = len(html_documents)
         while html_documents:
             st.session_state['html_token_count'] = check_html_token_limit(gemini_api_key, html_documents)
             if st.session_state['html_token_count']:
-                if len(html_documents) < slider_number_of_htmls:
+                if len(html_documents) < number_of_htmls:
                     st.session_state['token_limit_flag'] = True
                 break
             else:
