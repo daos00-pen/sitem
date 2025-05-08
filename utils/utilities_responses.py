@@ -50,7 +50,7 @@ def check_webpage_response(url: str):
             if not response.status_code == 200:
                 raise WebpageCodeError(url)
 
-            if not response.headers['Content-Type'].startswith('text/html'):
+            if not response.headers.get('Content-Type', '').startswith('text/html'):
                 raise InvalidWebpage(url)
         except Exception as e:
             raise Exception(e)
