@@ -29,4 +29,7 @@ def get_llm_token_count(gemini_api_key, text: str):
     except Exception as e:
         code = re.search(r"'code': ([\d]+),", str(e)).group(1)
         msg = re.search(r"'message': '(.*?\.)'", str(e)).group(1)
-        raise Exception(f"Could not calculate total HTML tokens with gemini API. Error code: {code}. Message: {msg}")
+        if msg and code:
+            raise Exception(f"Could not calculate total HTML tokens with gemini API. Error code: {code}. Message: {msg}")
+        else:
+            raise Exception(e)
