@@ -26,7 +26,7 @@ def extraction_information():
     with st.expander("URLs of extracted HTML documents"):
         tab_names = []
         for i in range(len(st.session_state['html_documents'])):
-            tab_names.append(f"page{i}")
+            tab_names.append(f"page{i+1}")
         tabs = st.tabs(tab_names)
         for idx, (label, tab) in enumerate(zip(st.session_state['html_documents'], tabs)):
             with tab:
