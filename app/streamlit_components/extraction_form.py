@@ -86,11 +86,11 @@ def form_html_extraction(gemini_api_key):
                 if url_input:
                     html_documents = []
                     stripped_url = url_input.strip()
-                    reformatted_url = reformat_url(stripped_url)
-                    if not check_url_string(reformatted_url):
+                    if not check_url_string(stripped_url):
                         st.warning("Not a valid URL format. Enter in a correct format: https://www.example.com/.")
                     else:
-                        st.session_state['url_input'] = reformatted_url
+                        st.session_state['url_input'] = reformat_url(stripped_url)
+                        print("call")
                         html_documents = call_get_html(st.session_state['url_input'], slider_number_of_htmls,
                                                        gemini_api_key)
 
