@@ -49,11 +49,3 @@ class ScrapeException(Exception):
     def __init__(self, url):
         self.url = url
         super().__init__(f"Could not extract HTML from '{self.url}'. Please enter a different URL or try again later.")
-
-
-class LinkScrapeException(Exception):
-    """Exception raised when scraper fails to scrape webpage"""
-
-    def __init__(self, url):
-        self.url = url
-        super().__init__(f"Could not extract links from '{self.url}'. Please enter a different URL or try again later.")

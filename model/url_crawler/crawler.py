@@ -37,9 +37,8 @@ class Crawler:
     def crawl_links(self) -> Counter:
         try:
             self.collected_internal_links.update(self.scraper.scrape_links())
-        except Exception as e:
-            self.scraper.close_driver()
-            raise Exception(e)
+        except Exception:
+            pass
 
         if len(self.collected_internal_links) < self.number_of_htmls:
             with requests.Session() as session:

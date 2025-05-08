@@ -1,6 +1,6 @@
 import re
 from google import genai
-from config.config import MAX_CONTEXT_LENGTH, MODEL_NAME
+from config.config import MAX_CONTEXT_LENGTH, MODEL_NAME, SYSTEM_PROMPT_LENGTH
 
 
 def check_html_token_limit(gemini_api_key, html_documents):
@@ -10,7 +10,7 @@ def check_html_token_limit(gemini_api_key, html_documents):
 
     try:
         total_tokens = get_llm_token_count(gemini_api_key, joined_html_documents)
-        if total_tokens and (total_tokens > MAX_CONTEXT_LENGTH):
+        if total_tokens and (total_tokens > (MAX_CONTEXT_LENGTH - SYSTEM_PROMPT_LENGTH)):
             return False
     except Exception as e:
         raise Exception(e)

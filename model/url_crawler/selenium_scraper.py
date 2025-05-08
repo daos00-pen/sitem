@@ -9,8 +9,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from config.config import MAX_LINKS_TO_SCRAPE
-from utils.custom_exceptions import ScrapeException, LinkScrapeException
+from utils.custom_exceptions import ScrapeException
 from utils.utilities_responses import check_webpage_response
 from utils.utilities_url import get_base_url
 
@@ -75,7 +74,7 @@ class SeleniumScraper:
 
                 self.url_language = soup.html.get("lang")
         except Exception:
-            raise LinkScrapeException(self.url)
+            pass
         return self.get_collected_internal_links()
 
     def get_collected_internal_links(self):
@@ -84,8 +83,8 @@ class SeleniumScraper:
     def set_collected_internal_links(self, collected_internal_links: Counter):
         self.collected_internal_links.update(collected_internal_links)
 
-    def scrape_html_documents(self, variety=True):
-        if self.url not in self.scraped_links and variety == True:
+    def scrape_html_documents(self):
+        if self.url not in self.scraped_links:
             html_dom, driver_url = self.get_html_dom(self.url)
             if html_dom:
                 self.add_html(self.url, driver_url, html_dom)
@@ -95,7 +94,7 @@ class SeleniumScraper:
                 raise ScrapeException(self.url)
 
         # Scrape website domain if not done yet
-        if self.base_url not in self.scraped_links and variety == True:
+        if self.base_url not in self.scraped_links:
             try:
                 check_webpage_response(self.base_url)
                 html_dom, driver_url = self.get_html_dom(self.base_url)
@@ -113,10 +112,20 @@ class SeleniumScraper:
         if not self.collected_internal_links:
             return
 
-        urls_to_scrape = []
         given_url_path_segments = self.get_path_segments(self.url)
+        if given_url_path_segments == 0:
+            self.scrape_variety(given_url_path_segments, variety=False)
+        else:
+            self.scrape_variety(given_url_path_segments, variety=True)
+            if len(self.scraped_htmls) < self.number_of_htmls:
+                self.scrape_variety(given_url_path_segments, variety=False)
+
+        return
+
+    def scrape_variety(self, given_url_path_segments, variety):
         similar = False
-        for url, count in self.collected_internal_links.most_common(MAX_LINKS_TO_SCRAPE):
+        urls_to_scrape = []
+        for url, count in self.collected_internal_links.most_common():
             if url in self.scraped_links:
                 continue
 
@@ -143,9 +152,9 @@ class SeleniumScraper:
                             similar = True
                             break
 
-            if similar:
-                similar = False
-                continue
+                    if similar:
+                        similar = False
+                        continue
 
             try:
                 check_webpage_response(url)
@@ -153,9 +162,9 @@ class SeleniumScraper:
                 continue
 
             urls_to_scrape.append(url)
-            if len(urls_to_scrape) > (self.number_of_htmls - len(self.scraped_htmls)):
+            if len(urls_to_scrape) >= (self.number_of_htmls - len(self.scraped_htmls)):
                 self.multiple_tab_scraping(urls_to_scrape)
-                if len(self.scraped_htmls) == self.number_of_htmls:
+                if len(self.scraped_htmls) >= self.number_of_htmls:
                     return
                 else:
                     urls_to_scrape = []
@@ -163,13 +172,9 @@ class SeleniumScraper:
         # if all collected_internal_links were iterated and there are links left in urls_to_scrape to scrape
         if urls_to_scrape:
             self.multiple_tab_scraping(urls_to_scrape)
-            if len(self.scraped_htmls) == self.number_of_htmls:
-                return
-
-        if len(self.scraped_htmls) < self.number_of_htmls and variety is True:
-            self.scrape_html_documents(variety=False)
 
         return
+
 
     def get_all_html_documents(self) -> list:
         return self.scraped_htmls
