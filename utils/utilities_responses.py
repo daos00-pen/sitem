@@ -52,6 +52,8 @@ def check_webpage_response(url: str):
 
             if not response.headers['Content-Type'].startswith('text/html'):
                 raise InvalidWebpage(url)
+        except Exception as e:
+            raise Exception(e)
         finally:
             if response:
                 response.close()
