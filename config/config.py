@@ -1,6 +1,6 @@
 # LLM model used
-MODEL_NAME = "gemini-2.0-flash-001"
-
+# MODEL_NAME = "gemini-2.0-flash-001"
+MODEL_NAME = "gemini-2.5-pro-exp-03-25"
 # LLM supported languages
 LANGUAGES = [
     "Same language as website", "Arabic", "Bengali", "Bulgarian", "Chinese", "Croatian", "Czech",
